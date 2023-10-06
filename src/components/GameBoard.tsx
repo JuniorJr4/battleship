@@ -1,5 +1,5 @@
-import Ship from "./Ship";
-import { ShipProps } from "./Ship";
+import Ship from "../components/Ship";
+import { ShipProps } from "../components/Ship";
 
 interface GameBoardProps {
   width: number;
@@ -24,11 +24,10 @@ export default class Gameboard {
     this.missedAttacks = [];
   }
 
-  placeShip(shipProps: ShipProps, x: number, y: number, isVertical: boolean) {
-    const ship = new Ship(shipProps);
+  placeShip(newShip: Ship, x: number, y: number, isVertical: boolean) {
     const positions: [number, number][] = [];
 
-    for (let i = 0; i < ship.length; i++) {
+    for (let i = 0; i < newShip.length; i++) {
       const position: [number, number] = isVertical ? [x, y + i] : [x + i, y];
       positions.push(position);
     }
@@ -41,12 +40,24 @@ export default class Gameboard {
       return false;
     }
 
-    const overlapping = this.ships.some((existingShip) =>
-    existingShip.location.some(([x, y]) =>
-    positions.some(([newX, newY]) => existingShip.getLocation(existingShip.location.indexOf([x, y])).x === newX && existingShip.getLocation(existingShip.location.indexOf([x, y])).y === newY)
-      )
-    );
+    const doesNewShipOverlap = (): boolean => {
+      for (const existingShip of this.ships) {
+        for (const [x, y] of newShip.location) {
+          console.log(`Checking segment (${x}, ${y}) of new ship`);
+          if (existingShip.location.some(([ex, ey]) => ex === x && ey === y)) {
+            console.log(`Checking segment (${ex}, ${ey}) of existing ship`);
+            return true;
+          }
+        }
+      }
+      return false;
+    };
 
-    return !overlapping;
+    if (doesNewShipOverlap()) {
+      return false;
+    }
+    newShip.setLocation(positions);
+    this.ships.push(newShip);
+    return true;
   }
 }
