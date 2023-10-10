@@ -31,6 +31,7 @@ export default class Ship {
       //throw new Error(`Invalid position: ${position}`);
       return;
     }
+    
     this.hits[position] = 1;
     this.isSunk = this.hits.every((hit) => hit === 1);
   }
