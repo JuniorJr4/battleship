@@ -44,7 +44,7 @@ export default class Gameboard {
   doesNewShipOverlap(positions: [number, number][], ships: Ship[]): boolean {
     for (const existingShip of ships) {
       for (const [x, y] of positions) {
-        console.log(`Checking segment (${x}, ${y}) of new ship`);
+        //console.log(`Checking segment (${x}, ${y}) of new ship`);
         if (existingShip.location.some(([ex, ey]) => ex === x && ey === y)) {
           return true;
         }
@@ -54,14 +54,16 @@ export default class Gameboard {
   }
 
   // Finalize placement of the ship if valid (maybe not needed??)
-  finalizeShipPlacement(newShip: Ship, positions: [number, number][]) {
+  finalizeShipPlacement(newShip: Ship, positions: [number, number][]): boolean {
     if (
       !this.doesNewShipOverlap(positions, this.ships) &&
       !this.isOutOfBounds(positions)
     ) {
       newShip.setLocation(positions);
       this.ships.push(newShip);
+      return true;
     }
+    return false;
   }
 
   placeShipRandomly(ship: Ship) {
@@ -84,7 +86,6 @@ export default class Gameboard {
     ship.setLocation(location);
     return true;
   }
-
 
   placeAllShipsRandomly() {
     const carrier = new Ship({ length: 5 });
@@ -109,7 +110,7 @@ export default class Gameboard {
         const hitIndex = hitShip.location.findIndex(
           (set) => JSON.stringify(set) === JSON.stringify([x, y])
         );
-        console.log(hitIndex);
+        //console.log(hitIndex);
         hitShip.hit(hitIndex);
         return hitShip;
       }

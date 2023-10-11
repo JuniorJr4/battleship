@@ -38,7 +38,6 @@ describe("Gameboard", () => {
       ]);
     });
 
-
     it("doesNewShipOverlap detects overlap correctly", () => {
       const gameboard = new Gameboard({ width: 10, height: 10 });
       const ship1 = new Ship({ length: 3 });
@@ -76,23 +75,23 @@ describe("Gameboard", () => {
       const shipProps2 = { length: 2 };
       const newShip1 = new Ship(shipProps1);
       const newShip2 = new Ship(shipProps2);
-      const ship1Segement = gameboard.getShipSegment(newShip1, 0, 0, true);
-      const ship2Segement = gameboard.getShipSegment(newShip2, 3, 3, false);
-      const isInBounds1 = gameboard.isOutOfBounds(ship1Segement);
-      const isInBounds2 = gameboard.isOutOfBounds(ship2Segement);
+      const ship1Segment = gameboard.getShipSegment(newShip1, 0, 0, true);
+      const ship2Segment = gameboard.getShipSegment(newShip2, 3, 3, false);
+      const isInBounds1 = gameboard.isOutOfBounds(ship1Segment);
+      const isInBounds2 = gameboard.isOutOfBounds(ship2Segment);
       const doesOverlap1 = gameboard.doesNewShipOverlap(
-        ship1Segement,
+        ship1Segment,
         gameboard.ships
       );
       const doesOverlap2 = gameboard.doesNewShipOverlap(
-        ship2Segement,
+        ship2Segment,
         gameboard.ships
       );
       if (!isInBounds1 && !doesOverlap1) {
-        gameboard.finalizeShipPlacement(newShip1, ship1Segement);
+        gameboard.finalizeShipPlacement(newShip1, ship1Segment);
       }
       if (!isInBounds2 && !doesOverlap2) {
-        gameboard.finalizeShipPlacement(newShip2, ship2Segement);
+        gameboard.finalizeShipPlacement(newShip2, ship2Segment);
       }
       expect(newShip1.location).toEqual([
         [0, 0],
@@ -111,14 +110,14 @@ describe("Gameboard", () => {
       const gameboard = new Gameboard({ width: 10, height: 10 });
       const shipProps1 = { length: 3 };
       const newShip1 = new Ship(shipProps1);
-      const ship1Segement = gameboard.getShipSegment(newShip1, 0, 0, true);
-      gameboard.finalizeShipPlacement(newShip1, ship1Segement);
+      const ship1Segment = gameboard.getShipSegment(newShip1, 0, 0, true);
+      gameboard.finalizeShipPlacement(newShip1, ship1Segment);
       const result = gameboard.attackResult(gameboard.ships, [0, 0]);
       expect(result).toBe(newShip1);
     });
   });
 });
-describe('attackResult', () => {
+describe("attackResult", () => {
   let gameboard: Gameboard;
   let ship1: Ship;
   let ship2: Ship;
@@ -127,33 +126,42 @@ describe('attackResult', () => {
     gameboard = new Gameboard({ width: 10, height: 10 });
     ship1 = new Ship({ length: 3 });
     ship2 = new Ship({ length: 4 });
-    ship1.setLocation([[0, 0], [0, 1], [0, 2]]);
-    ship2.setLocation([[2, 2], [2, 3], [2, 4], [2, 5]]);
+    ship1.setLocation([
+      [0, 0],
+      [0, 1],
+      [0, 2],
+    ]);
+    ship2.setLocation([
+      [2, 2],
+      [2, 3],
+      [2, 4],
+      [2, 5],
+    ]);
     gameboard.ships.push(ship1);
     gameboard.ships.push(ship2);
   });
 
-  it('should return the hit ship if a ship is hit', () => {
+  it("should return the hit ship if a ship is hit", () => {
     const hitShip = gameboard.attackResult(gameboard.ships, [2, 3]);
     expect(hitShip).toBe(ship2);
   });
 
-  it('should return null if no ship is hit', () => {
+  it("should return null if no ship is hit", () => {
     const hitShip = gameboard.attackResult(gameboard.ships, [7, 8]);
     expect(hitShip).toBeNull();
   });
 
-  it('should add the missed attack to the missedAttacks array if no ship is hit', () => {
+  it("should add the missed attack to the missedAttacks array if no ship is hit", () => {
     gameboard.attackResult(gameboard.ships, [7, 8]);
     expect(gameboard.missedAttacks).toContainEqual([7, 8]);
   });
 
-  it('should mark the correct segment of the hit ship as hit', () => {
+  it("should mark the correct segment of the hit ship as hit", () => {
     const hitShip = gameboard.attackResult(gameboard.ships, [2, 3]);
     expect(hitShip?.hits).toEqual([0, 1, 0, 0]);
   });
 
-  it('should mark the hit ship as sunk if all segments are hit', () => {
+  it("should mark the hit ship as sunk if all segments are hit", () => {
     gameboard.attackResult(gameboard.ships, [2, 2]);
     gameboard.attackResult(gameboard.ships, [2, 3]);
     gameboard.attackResult(gameboard.ships, [2, 4]);
@@ -161,7 +169,7 @@ describe('attackResult', () => {
     expect(ship2.isSunk).toBe(true);
   });
 });
-describe('allShipsSunk', () => {
+describe("allShipsSunk", () => {
   let gameboard: Gameboard;
   let ship1: Ship;
   let ship2: Ship;
@@ -170,20 +178,29 @@ describe('allShipsSunk', () => {
     gameboard = new Gameboard({ width: 10, height: 10 });
     ship1 = new Ship({ length: 3 });
     ship2 = new Ship({ length: 4 });
-    ship1.setLocation([[0, 0], [0, 1], [0, 2]]);
-    ship2.setLocation([[2, 2], [2, 3], [2, 4], [2, 5]]);
+    ship1.setLocation([
+      [0, 0],
+      [0, 1],
+      [0, 2],
+    ]);
+    ship2.setLocation([
+      [2, 2],
+      [2, 3],
+      [2, 4],
+      [2, 5],
+    ]);
     gameboard.ships.push(ship1);
     gameboard.ships.push(ship2);
   });
-  it('should return true if all ships are sunk', () => {
+  it("should return true if all ships are sunk", () => {
     const ships = gameboard.ships;
     ships[0].isSunk = true;
-    ships[1].isSunk = true; 
-    
+    ships[1].isSunk = true;
+
     expect(gameboard.allShipsSunk(ships)).toBe(true);
   });
 
-  it('should return false if not all ships are sunk', () => {
+  it("should return false if not all ships are sunk", () => {
     const ships = gameboard.ships;
 
     ships[0].hit(0);
@@ -192,15 +209,15 @@ describe('allShipsSunk', () => {
     expect(gameboard.allShipsSunk(ships)).toBe(false);
   });
 
-  it('should return true if there are no ships', () => {
+  it("should return true if there are no ships", () => {
     const ships: Ship[] = [];
 
     expect(gameboard.allShipsSunk(ships)).toBe(true);
   });
 });
-describe('GameBoard', () => {
-  describe('placeShipRandomly', () => {
-    it('should place a ship randomly on the game board', () => {
+describe("GameBoard", () => {
+  describe("placeShipRandomly", () => {
+    it("should place a ship randomly on the game board", () => {
       const gameBoard = new Gameboard({ width: 10, height: 10 });
       const ship = new Ship({ length: 3 });
       const isPlaced = gameBoard.placeShipRandomly(ship);
@@ -208,31 +225,43 @@ describe('GameBoard', () => {
       expect(ship.location.length).toBe(3);
     });
 
-    it('should not place a ship that overlaps with another ship', () => {
-      const gameBoard = new Gameboard({ width: 10, height: 10 });
+    it("should not place a ship that overlaps with another ship", () => {
+      const gameBoard = new Gameboard({ width: 3, height: 3 });
       const ship1 = new Ship({ length: 3 });
       const ship2 = new Ship({ length: 3 });
-      gameBoard.placeShipRandomly(ship1);
-      const isPlaced = gameBoard.placeShipRandomly(ship2);
+      const ship3 = new Ship({ length: 4 });
+      ship1.setLocation([
+        [0, 0],
+        [0, 1],
+        [0, 2],
+      ]);
+      ship2.setLocation([
+        [1, 0],
+        [1, 1],
+        [1, 2],
+      ]);
+      gameBoard.ships.push(ship1);
+      gameBoard.ships.push(ship2);
+      const isPlaced = gameBoard.placeShipRandomly(ship3);
       expect(isPlaced).toBe(false);
     });
   });
 
-  // describe('placeAllShipsRandomly', () => {
-  //   it('should place all ships randomly on the game board', () => {
-  //     const gameBoard = new GameBoard({ width: 10, height: 10 });
-  //     gameBoard.placeAllShipsRandomly();
-  //     expect(gameBoard.ships.length).toBe(5);
-  //     for (const ship of gameBoard.ships) {
-  //       expect(ship.location.length).toBe(ship.length);
-  //     }
-  //   });
+  describe('placeAllShipsRandomly', () => {
+    it('should place all ships randomly on the game board', () => {
+      const gameBoard = new Gameboard({ width: 10, height: 10 });
+      gameBoard.placeAllShipsRandomly();
+      expect(gameBoard.ships.length).toBe(5);
+      for (const ship of gameBoard.ships) {
+        expect(ship.location.length).toBe(ship.length);
+      }
+    });
 
-  //   it('should not place ships that overlap with each other', () => {
-  //     const gameBoard = new GameBoard({ width: 10, height: 10 });
-  //     gameBoard.placeAllShipsRandomly();
-  //     const isOverlap = gameBoard.isAnyShipOverlap();
-  //     expect(isOverlap).toBe(false);
-  //   });
-  // });
+    // it('should not place ships that overlap with each other', () => {
+    //   const gameBoard = new Gameboard({ width: 10, height: 10 });
+    //   gameBoard.placeAllShipsRandomly();
+    //   const isOverlap = gameBoard.isAnyShipOverlap();
+    //   expect(isOverlap).toBe(false);
+    // });
+  });
 });
