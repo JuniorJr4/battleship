@@ -1,5 +1,6 @@
 //Define Ship interface to be used in Ship component
 export interface ShipProps {
+  name?: string;
   length: number;
 }
 
@@ -14,16 +15,16 @@ export default class Ship {
     this.length = props.length;
     this.hits = new Array(props.length).fill(0);
     this.isSunk = false;
-    this.name = "";
+    this.name = props.name ?? "";
     this.location = [];
   }
 
   setLocation(location: [number, number][]) {
-    this.location = location
+    this.location = location;
   }
-
+  // not needed?
   getLocation(index: number) {
-    return { x: this.location[index][0], y: this.location[index][1]}
+    return { x: this.location[index][0], y: this.location[index][1] };
   }
 
   hit(position: number) {
@@ -31,7 +32,7 @@ export default class Ship {
       //throw new Error(`Invalid position: ${position}`);
       return;
     }
-    
+
     this.hits[position] = 1;
     this.isSunk = this.hits.every((hit) => hit === 1);
   }

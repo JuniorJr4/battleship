@@ -48,7 +48,7 @@ describe('Player', () => {
       player.computerRandomAttack(gameboard, selectedPoints);
       player.computerRandomAttack(gameboard, selectedPoints);
       expect(gameboard.attackResult).toHaveBeenCalledTimes(2);
-      expect(selectedPoints).toBe(2);
+      expect(selectedPoints.size).toBe(2);
     });
   });
 });

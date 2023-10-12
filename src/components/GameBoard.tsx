@@ -15,10 +15,18 @@ export default class Gameboard {
   constructor(props: GameBoardProps) {
     this.width = props.width ?? 10;
     this.height = props.height ?? 10;
-    this.ships = [];
+    this.ships = [
+      { name: "Carrier", length: 5 },
+      { name: "Battleship", length: 4 },
+      { name: "Cruiser", length: 3 },
+      { name: "Submarine", length: 3 },
+      { name: "Destroyer", length: 2 },
+    ].map((props) => new Ship(props));
     this.missedAttacks = [];
     this.allSunk = false;
   }
+
+
   // still needed?
   getShipLocations(): [number, number][][] {
     return this.ships.map((ship) => ship.location);
@@ -60,6 +68,7 @@ export default class Gameboard {
       !this.isOutOfBounds(positions)
     ) {
       newShip.setLocation(positions);
+      // need to fix as ships are predefined
       this.ships.push(newShip);
       return true;
     }
@@ -88,12 +97,13 @@ export default class Gameboard {
   }
 
   placeAllShipsRandomly() {
-    const carrier = new Ship({ length: 5 });
-    const battleship = new Ship({ length: 4 });
-    const cruiser = new Ship({ length: 3 });
-    const submarine = new Ship({ length: 3 });
-    const destroyer = new Ship({ length: 2 });
-    this.ships.push(carrier, battleship, cruiser, submarine, destroyer);
+    // need to fix as ships are predefined
+    // const carrier = new Ship({ length: 5 });
+    // const battleship = new Ship({ length: 4 });
+    // const cruiser = new Ship({ length: 3 });
+    // const submarine = new Ship({ length: 3 });
+    // const destroyer = new Ship({ length: 2 });
+    // this.ships.push(carrier, battleship, cruiser, submarine, destroyer);
 
     for (const ship of this.ships) {
       let isPlaced = false;

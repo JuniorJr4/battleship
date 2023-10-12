@@ -1,5 +1,6 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Home from "./components/Home";
 import Battleship from "./components/Battleship";
 import "./App.css";
 
@@ -8,7 +9,7 @@ function App() {
     <div className="App">
       <Router>
         <Routes>
-          <Route path="/battleship" element={<Battleship />} />
+          <Route path="/" element={<Battleship />} />
         </Routes>
       </Router>
     </div>
