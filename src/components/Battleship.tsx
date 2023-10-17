@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, MouseEvent } from "react";
 import Gameboard from "../components/GameBoard";
 import Player from "../components/Player";
 import GameboardComponent from "../components/GameboardComponent";
@@ -16,41 +16,24 @@ export default function Battleship() {
   );
   const [currentPlayer, setCurrentPlayer] = useState(player);
 
-  useEffect(() => {
-    const playerPlaceShipBtn = document.querySelector(".player-place-ship");
-    function handlePlayerPlaceShip(x: number, y: number) {
-      player.playerPlaceShip(
-        playerGameboard,
-        playerGameboard.ships[0],
-        x,
-        y,
-        true
-      );
-      console.log(playerGameboard.ships[0]);
-    }
-    playerPlaceShipBtn?.addEventListener("click", () => {
-      handlePlayerPlaceShip(0, 0);
-    });
-    return () => {
-      playerPlaceShipBtn?.removeEventListener("click", () => {
-        handlePlayerPlaceShip(0, 0);
-      });
-    }
-  }, [player, playerGameboard]);
+  const [renderCount, setRenderCount] = useState(0);
+  
 
-  // function handlePlayerPlaceShip(x: number, y: number) {
-  //   player.playerPlaceShip(
-  //     playerGameboard,
-  //     playerGameboard.ships[0],
-  //     x,
-  //     y,
-  //     true
-  //   );
-  // }
+
+  useEffect(() => {
+    setRenderCount((prevCount) => prevCount + 1);
+  }, [computerGameboard]);
+  // useEffect(() => {
+    
+  // }, [player, playerGameboard]);
+
+ 
 
   function handleComputerPlaceShips() {
     computerGameboard.placeAllShipsRandomly();
     console.log(computerGameboard.ships);
+    setComputerGameboard(computerGameboard);
+    setRenderCount((prevCount) => prevCount + 1);
   }
 
   function handleComputerAttack() {
@@ -76,7 +59,9 @@ export default function Battleship() {
         <GameboardComponent gameboard={computerGameboard} />
       </div>
 
-      <button onClick={handleComputerPlaceShips}>Computer Place Ships</button>
+      <button className="comp" onClick={handleComputerPlaceShips}>
+        Computer Place Ships
+      </button>
       <button onClick={handleComputerAttack}>Computer Attack</button>
     </div>
   );
