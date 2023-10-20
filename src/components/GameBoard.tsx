@@ -32,7 +32,8 @@ export default class Gameboard {
     return this.ships.map((ship) => ship.location);
   }
 
-  // returns all the places a that a ship occupies
+  // returns all the places a that a ship occupies from a starting
+  //point (x,y) and a direction (isVertical)
   getShipSegment(newShip: Ship, x: number, y: number, isVertical: boolean) {
     const positions: [number, number][] = [];
     for (let i = 0; i < newShip.length; i++) {
@@ -96,16 +97,10 @@ export default class Gameboard {
     return true;
   }
 
-  placeAllShipsRandomly() {
-    // need to fix as ships are predefined
-    // const carrier = new Ship({ length: 5 });
-    // const battleship = new Ship({ length: 4 });
-    // const cruiser = new Ship({ length: 3 });
-    // const submarine = new Ship({ length: 3 });
-    // const destroyer = new Ship({ length: 2 });
-    // this.ships.push(carrier, battleship, cruiser, submarine, destroyer);
 
-    for (const ship of this.ships) {
+  // Place all ships randomly on the board
+  placeAllShipsRandomly() {
+       for (const ship of this.ships) {
       let isPlaced = false;
       while (!isPlaced) {
         isPlaced = this.placeShipRandomly(ship);
@@ -132,5 +127,10 @@ export default class Gameboard {
   // Returns true if all ships have been sunk
   allShipsSunk(allShips: Ship[]): boolean {
     return allShips.every((ship) => ship.isSunk);
+  }
+
+  handleCellClick(x: number, y: number) {
+    this.attackResult(this.ships, [x, y]);
+    
   }
 }

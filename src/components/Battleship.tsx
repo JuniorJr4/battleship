@@ -17,17 +17,18 @@ export default function Battleship() {
   const [currentPlayer, setCurrentPlayer] = useState(player);
 
   const [renderCount, setRenderCount] = useState(0);
-  
 
-
+  //to re-render board
   useEffect(() => {
     setRenderCount((prevCount) => prevCount + 1);
-  }, [computerGameboard]);
-  // useEffect(() => {
-    
-  // }, [player, playerGameboard]);
+  }, [computerGameboard, playerGameboard]);
 
- 
+  //temp set to place all ships randomly
+  function handlePlayerPlaceShip() {
+    playerGameboard.placeAllShipsRandomly();
+    setPlayerGameboard(playerGameboard);
+    setRenderCount((prevCount) => prevCount + 1);
+  }
 
   function handleComputerPlaceShips() {
     computerGameboard.placeAllShipsRandomly();
@@ -37,10 +38,12 @@ export default function Battleship() {
   }
 
   function handleComputerAttack() {
-    computerPlayer.computerRandomAttack(
+    const attackResult = computerPlayer.computerRandomAttack(
       computerGameboard,
       computerPlayer.computerMoves
     );
+    //attackResult === null ? 
+    //setComputerGameboard(...computerGameboard, );
   }
 
   return (
@@ -48,21 +51,23 @@ export default function Battleship() {
       <h1>Battleship</h1>
       <h2>{currentPlayer.name}'s turn</h2>
 
-      <div className="gameboards  ">
-        <div className="player-gameboard"></div>
-        <h3>Player</h3>
-        <GameboardComponent gameboard={playerGameboard} />
-        <button className="player-place-ship">Player Place Ship</button>
-
-        <div className="computer-gameboard"></div>
-        <h3>Computer</h3>
-        <GameboardComponent gameboard={computerGameboard} />
+      <div className="gameboards flex justify-around ">
+        <div className="player-gameboard">
+          <h3>Player</h3>
+          <GameboardComponent gameboard={playerGameboard} />
+          <button className="player-place-ship" onClick={handlePlayerPlaceShip}>
+            Player Place Ship
+          </button>
+        </div>
+        <div className="computer-gameboard">
+          <h3>Computer</h3>
+          <GameboardComponent gameboard={computerGameboard} />
+          <button className="comp" onClick={handleComputerPlaceShips}>
+            Computer Place Ships
+          </button>
+          <button onClick={handleComputerAttack}>Computer Attack</button>
+        </div>
       </div>
-
-      <button className="comp" onClick={handleComputerPlaceShips}>
-        Computer Place Ships
-      </button>
-      <button onClick={handleComputerAttack}>Computer Attack</button>
     </div>
   );
 }

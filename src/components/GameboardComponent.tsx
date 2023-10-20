@@ -46,9 +46,10 @@ export default function GameboardComponent({ gameboard }: Props) {
             key={key}
             data-x={i}
             data-y={j}
-            className={`cell h-10 border border-black border-solid ${
+            className={`cell h-8 border border-black border-solid ${
               isShipLocation ? "bg-black" : ""
             }`}
+            onClick={() => gameboard.handleCellClick(i, j)}
           ></div>
         );
       }
@@ -60,11 +61,6 @@ export default function GameboardComponent({ gameboard }: Props) {
     }
   }
 
-  // useEffect(() => {
-  //   const cellElements = document.querySelectorAll(".cell");
-  //   cellElements.forEach((cell) => {
-  //     // console.log(cell.getAttribute("key"));
-  //   });
-  // }, []);
+
   return <div className="gameboard grid grid-cols-10 ">{rows} </div>;
 }

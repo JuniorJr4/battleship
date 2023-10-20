@@ -16,13 +16,13 @@ code {
     monospace;
 }
 
-.cell {
+/* .cell {
   width: 100%;
-}
+} */
 
 .gameboard {
-  width: 600px;
-  height: 600px;
+  width: 300px;
+  height: auto;
 }
 
 /* .row {
