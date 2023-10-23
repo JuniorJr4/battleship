@@ -30,10 +30,19 @@ export default function Battleship() {
     setRenderCount((prevCount) => prevCount + 1);
   }
 
+  function handlePlayerAttack(e: MouseEvent<HTMLDivElement>) {
+    const x = parseInt((e.target as HTMLDivElement).getAttribute("data-x")!);
+    const y = parseInt((e.target as HTMLDivElement).getAttribute("data-y")!);
+    if (!isNaN(x) && !isNaN(y)) {
+      computerGameboard.attackResult(computerGameboard.ships, [x, y]);
+    }
+  }
+
   function handleComputerPlaceShips() {
-    computerGameboard.placeAllShipsRandomly();
-    console.log(computerGameboard.ships);
-    setComputerGameboard(computerGameboard);
+    const newComputerGameboard = new Gameboard({ width: 10, height: 10 });
+    newComputerGameboard.placeAllShipsRandomly();
+    console.log(newComputerGameboard.ships);
+    setComputerGameboard(newComputerGameboard);
     setRenderCount((prevCount) => prevCount + 1);
   }
 
@@ -42,7 +51,7 @@ export default function Battleship() {
       computerGameboard,
       computerPlayer.computerMoves
     );
-    //attackResult === null ? 
+    //attackResult === null ?
     //setComputerGameboard(...computerGameboard, );
   }
 

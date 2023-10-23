@@ -12,22 +12,18 @@ export default function GameboardComponent({ gameboard }: Props) {
   useEffect(() => {
     setRenderCount((prevCount) => prevCount + 1);
   }, [gameboard]);
+  // selected cell state to use when clicked??
+  const [selectedCell, setSelectedCell] = useState<[number, number] | null>(
+    null
+  );
 
-  // const ship1 = new Ship({ length: 3 });
-  // const ship2 = new Ship({ length: 4 });
-  // ship1.setLocation([
-  //   [0, 0],
-  //   [0, 1],
-  //   [0, 2],
-  // ]);
-  // ship2.setLocation([
-  //   [2, 2],
-  //   [2, 3],
-  //   [2, 4],
-  //   [2, 5],
-  // ]);
-  // gameboard.ships.push(ship1);
-  // gameboard.ships.push(ship2);
+  // return coordinates of clicked cell
+  const handleCellClick = (x: number, y: number) => {
+    const coords: [number, number] = [x, y];
+    setSelectedCell(coords);
+    //gameboard.attackResult(gameboard.ships, [x, y]);
+   
+  };
   const rows: React.JSX.Element[] = [];
   if (gameboard.height > 0 && gameboard.width > 0) {
     for (let i = 0; i < gameboard.height; i++) {
@@ -40,6 +36,7 @@ export default function GameboardComponent({ gameboard }: Props) {
             (location) => location[0] === i && location[1] === j
           )
         );
+        //const hitOrMiss = gameboard.getCellClass(i, j);
         console.log(isShipLocation);
         cells.push(
           <div
@@ -49,7 +46,7 @@ export default function GameboardComponent({ gameboard }: Props) {
             className={`cell h-8 border border-black border-solid ${
               isShipLocation ? "bg-black" : ""
             }`}
-            onClick={() => gameboard.handleCellClick(i, j)}
+            onClick={() => handleCellClick(i, j)}
           ></div>
         );
       }
@@ -60,7 +57,6 @@ export default function GameboardComponent({ gameboard }: Props) {
       );
     }
   }
-
 
   return <div className="gameboard grid grid-cols-10 ">{rows} </div>;
 }
