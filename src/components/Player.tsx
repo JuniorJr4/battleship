@@ -9,13 +9,16 @@ export default class Player {
   name: string;
   computerMoves: Set<string>;
   playerMoves: Set<string>;
+  isPlayerTurn: boolean;
 
   constructor(props: PlayerProps) {
     this.name = props.name;
     this.computerMoves = new Set<string>();
     this.playerMoves = new Set<string>();
+    this.isPlayerTurn = false;
   }
 
+  //When player selects a starting square to place ship
   playerPlaceShip(
     gameboard: Gameboard,
     ship: Ship,

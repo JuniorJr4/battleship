@@ -16,25 +16,40 @@ export default function Battleship() {
   );
   const [currentPlayer, setCurrentPlayer] = useState(player);
 
-  const [renderCount, setRenderCount] = useState(0);
+  // const [renderCount, setRenderCount] = useState(0);
+
+  const [isGameRunning, setIsGameRunning] = useState(false);
+
+  const startGame = () => {
+    setIsGameRunning(true);
+  };
+
+  const stopGame = () => {
+    setIsGameRunning(false);
+  };
 
   //to re-render board
-  useEffect(() => {
-    setRenderCount((prevCount) => prevCount + 1);
-  }, [computerGameboard, playerGameboard]);
+  // useEffect(() => {
+  //   setRenderCount((prevCount) => prevCount + 1);
+  // }, [computerGameboard, playerGameboard]);
 
   //temp set to place all ships randomly
   function handlePlayerPlaceShip() {
-    playerGameboard.placeAllShipsRandomly();
-    setPlayerGameboard(playerGameboard);
-    setRenderCount((prevCount) => prevCount + 1);
+    const newPlayerGameboard = new Gameboard({ width: 10, height: 10 });
+    newPlayerGameboard.placeAllShipsRandomly();
+    setPlayerGameboard(newPlayerGameboard);
+    //setRenderCount((prevCount) => prevCount + 1);
   }
 
   function handlePlayerAttack(e: MouseEvent<HTMLDivElement>) {
     const x = parseInt((e.target as HTMLDivElement).getAttribute("data-x")!);
     const y = parseInt((e.target as HTMLDivElement).getAttribute("data-y")!);
     if (!isNaN(x) && !isNaN(y)) {
-      computerGameboard.attackResult(computerGameboard.ships, [x, y]);
+     const isHit = computerGameboard.attackResult(computerGameboard.ships, [x, y]);
+     computerGameboard.updateCellClass(x, y, isHit, true);
+      setComputerGameboard(computerGameboard);
+      //setRenderCount((prevCount) => prevCount + 1);
+      console.log(e,x,y);
     }
   }
 
@@ -43,7 +58,7 @@ export default function Battleship() {
     newComputerGameboard.placeAllShipsRandomly();
     console.log(newComputerGameboard.ships);
     setComputerGameboard(newComputerGameboard);
-    setRenderCount((prevCount) => prevCount + 1);
+    //setRenderCount((prevCount) => prevCount + 1);
   }
 
   function handleComputerAttack() {
@@ -53,6 +68,17 @@ export default function Battleship() {
     );
     //attackResult === null ?
     //setComputerGameboard(...computerGameboard, );
+  }
+
+  const gameLoop = () => {
+    if (playerGameboard.allShipsSunk(playerGameboard.ships) || computerGameboard.allShipsSunk(computerGameboard.ships)) {
+      stopGame();
+      return;
+    }
+
+    if (player.isPlayerTurn) {
+
+    }
   }
 
   return (
@@ -70,7 +96,7 @@ export default function Battleship() {
         </div>
         <div className="computer-gameboard">
           <h3>Computer</h3>
-          <GameboardComponent gameboard={computerGameboard} />
+          <GameboardComponent  onClick={handlePlayerAttack} gameboard={computerGameboard} />
           <button className="comp" onClick={handleComputerPlaceShips}>
             Computer Place Ships
           </button>

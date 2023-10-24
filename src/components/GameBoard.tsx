@@ -26,7 +26,6 @@ export default class Gameboard {
     this.allSunk = false;
   }
 
-
   // still needed?
   getShipLocations(): [number, number][][] {
     return this.ships.map((ship) => ship.location);
@@ -97,10 +96,9 @@ export default class Gameboard {
     return true;
   }
 
-
   // Place all ships randomly on the board
   placeAllShipsRandomly() {
-       for (const ship of this.ships) {
+    for (const ship of this.ships) {
       let isPlaced = false;
       while (!isPlaced) {
         isPlaced = this.placeShipRandomly(ship);
@@ -108,8 +106,33 @@ export default class Gameboard {
     }
   }
 
-  //Returns ship that has been hit or null if no ship hit (and adds missed attack)
-  attackResult(allShips: Ship[], [x, y]: [number, number]): Ship | null {
+  //Update class of cell to draw a hit or miss
+  updateCellClass(
+    x: number,
+    y: number,
+    isHit: boolean,
+    isComputerBoard: boolean //true when updating computer board
+  ) {
+    let cellParent;
+    if (isComputerBoard) {
+      cellParent = document.querySelector(".computer-gameboard");
+    } else {
+      cellParent = document.querySelector(".player-gameboard");
+    }
+
+    const cell = cellParent?.querySelector(`[data-x="${x}"][data-y="${y}"]`);
+    if (cell) {
+      cell.classList.remove("bg-blue-500");
+      if (isHit) {
+        cell.classList.add("bg-red-500");
+      } else {
+        cell.classList.add("bg-gray-500");
+      }
+    }
+  }
+
+  //Returns true for a hit (and logs hit to ship) or false if no ship hit (and adds missed attack)
+  attackResult(allShips: Ship[], [x, y]: [number, number]): boolean {
     for (const hitShip of allShips) {
       if (hitShip.location.some(([ex, ey]) => ex === x && ey === y)) {
         const hitIndex = hitShip.location.findIndex(
@@ -117,11 +140,11 @@ export default class Gameboard {
         );
         //console.log(hitIndex);
         hitShip.hit(hitIndex);
-        return hitShip;
+        return true;
       }
     }
     this.missedAttacks.push([x, y]);
-    return null;
+    return false;
   }
 
   // Returns true if all ships have been sunk
@@ -129,8 +152,7 @@ export default class Gameboard {
     return allShips.every((ship) => ship.isSunk);
   }
 
-  handleCellClick(x: number, y: number) {
-    this.attackResult(this.ships, [x, y]);
-    
+  getCellClass(x: number, y: number) {
+    this.attackResult(this.ships, [x, y]); // need to fix
   }
 }
