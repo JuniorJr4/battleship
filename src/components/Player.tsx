@@ -8,14 +8,13 @@ interface PlayerProps {
 export default class Player {
   name: string;
   computerMoves: Set<string>;
-  playerMoves: Set<string>;
-  isPlayerTurn: boolean;
+  attacksMade: Set<string>;
 
   constructor(props: PlayerProps) {
     this.name = props.name;
+    //computerMoves needed?
     this.computerMoves = new Set<string>();
-    this.playerMoves = new Set<string>();
-    this.isPlayerTurn = false;
+    this.attacksMade = new Set<string>();
   }
 
   //When player selects a starting square to place ship
@@ -46,6 +45,7 @@ export default class Player {
     }
 
     selectedPoints.add(point);
+    this.attacksMade = new Set<string>([...this.attacksMade, selectedPoints]);
     gameboard.attackResult(gameboard.ships, [randomX, randomY]);
   }
 }

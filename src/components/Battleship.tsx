@@ -18,7 +18,11 @@ export default function Battleship() {
 
   // const [renderCount, setRenderCount] = useState(0);
 
-  const [isGameRunning, setIsGameRunning] = useState(false);
+  const [selectedCell, setSelectedCell] = useState<[number, number] | null>(
+    null
+  );
+
+  const [isGameRunning, setIsGameRunning] = useState(true);
 
   const startGame = () => {
     setIsGameRunning(true);
@@ -41,16 +45,12 @@ export default function Battleship() {
     //setRenderCount((prevCount) => prevCount + 1);
   }
 
-  function handlePlayerAttack(e: MouseEvent<HTMLDivElement>) {
+  function handlePlayerClick(e: MouseEvent<HTMLDivElement>) {
     const x = parseInt((e.target as HTMLDivElement).getAttribute("data-x")!);
     const y = parseInt((e.target as HTMLDivElement).getAttribute("data-y")!);
-    if (!isNaN(x) && !isNaN(y)) {
-     const isHit = computerGameboard.attackResult(computerGameboard.ships, [x, y]);
-     computerGameboard.updateCellClass(x, y, isHit, true);
-      setComputerGameboard(computerGameboard);
-      //setRenderCount((prevCount) => prevCount + 1);
-      console.log(e,x,y);
-    }
+    const coords: [number, number] = [x, y];
+    setSelectedCell(coords);
+    console.log(selectedCell, coords);
   }
 
   function handleComputerPlaceShips() {
@@ -61,6 +61,39 @@ export default function Battleship() {
     //setRenderCount((prevCount) => prevCount + 1);
   }
 
+  useEffect(() => {
+    function handlePlayerAttack() {
+      console.log(selectedCell)
+      if (selectedCell) {
+        const [x, y] = selectedCell;
+        const isHit = computerGameboard.attackResult(
+          computerGameboard.ships,
+          selectedCell
+        );
+        computerGameboard.updateCellClass(x, y, isHit, true);
+        setComputerGameboard(computerGameboard);
+        //setRenderCount((prevCount) => prevCount + 1);
+      }
+    }
+
+    if (isGameRunning) {
+      if (
+        playerGameboard.allShipsSunk(playerGameboard.ships) ||
+        computerGameboard.allShipsSunk(computerGameboard.ships)
+      ) {
+        stopGame();
+        return;
+      }
+
+      if (currentPlayer === player && selectedCell) {
+        //player turn
+        // const [x, y] = selectedCell;
+        handlePlayerAttack();
+      }
+    }
+  }, [computerGameboard, currentPlayer, isGameRunning, player, playerGameboard, selectedCell, setComputerGameboard]);
+
+
   function handleComputerAttack() {
     const attackResult = computerPlayer.computerRandomAttack(
       computerGameboard,
@@ -70,16 +103,23 @@ export default function Battleship() {
     //setComputerGameboard(...computerGameboard, );
   }
 
-  const gameLoop = () => {
-    if (playerGameboard.allShipsSunk(playerGameboard.ships) || computerGameboard.allShipsSunk(computerGameboard.ships)) {
-      stopGame();
-      return;
-    }
+  // useEffect(() => {
+  //   if (isGameRunning) {
+  //     if (
+  //       playerGameboard.allShipsSunk(playerGameboard.ships) ||
+  //       computerGameboard.allShipsSunk(computerGameboard.ships)
+  //     ) {
+  //       stopGame();
+  //       return;
+  //     }
 
-    if (player.isPlayerTurn) {
-
-    }
-  }
+  //     if (currentPlayer === player && selectedCell) {
+  //       //player turn
+  //       // const [x, y] = selectedCell;
+  //       handlePlayerAttack();
+  //     }
+  //   }
+  // }, [computerGameboard, currentPlayer, isGameRunning, player, playerGameboard, selectedCell]);
 
   return (
     <div>
@@ -96,7 +136,10 @@ export default function Battleship() {
         </div>
         <div className="computer-gameboard">
           <h3>Computer</h3>
-          <GameboardComponent  onClick={handlePlayerAttack} gameboard={computerGameboard} />
+          <GameboardComponent
+            onClick={handlePlayerClick}
+            gameboard={computerGameboard}
+          />
           <button className="comp" onClick={handleComputerPlaceShips}>
             Computer Place Ships
           </button>
