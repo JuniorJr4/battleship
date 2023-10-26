@@ -22,9 +22,10 @@ export default function Battleship() {
     null
   );
 
-  const [isGameRunning, setIsGameRunning] = useState(true);
+  const [isGameRunning, setIsGameRunning] = useState(false);
 
   const startGame = () => {
+    setSelectedCell(null);
     setIsGameRunning(true);
   };
 
@@ -50,7 +51,11 @@ export default function Battleship() {
     const y = parseInt((e.target as HTMLDivElement).getAttribute("data-y")!);
     const coords: [number, number] = [x, y];
     setSelectedCell(coords);
-    console.log(selectedCell, coords);
+    console.log(
+      computerGameboard.missedAttacks,
+      playerGameboard,
+      computerGameboard
+    );
   }
 
   function handleComputerPlaceShips() {
@@ -63,11 +68,11 @@ export default function Battleship() {
 
   useEffect(() => {
     function handlePlayerAttack() {
-      console.log(selectedCell)
+      console.log(selectedCell);
       if (selectedCell) {
         const [x, y] = selectedCell;
         const isHit = computerGameboard.attackResult(
-          computerGameboard.ships,
+          computerGameboard,
           selectedCell
         );
         computerGameboard.updateCellClass(x, y, isHit, true);
@@ -76,11 +81,21 @@ export default function Battleship() {
       }
     }
 
+    function handleComputerAttack() {
+      const randomAttack = computerPlayer.computerRandomAttack(
+        playerGameboard,
+        computerPlayer.attacksMade
+      );
+      const [x, y] = randomAttack.split(",").map(Number);
+      const isHit = playerGameboard.attackResult(playerGameboard, [x, y]);
+      playerGameboard.updateCellClass(x, y, isHit, false);
+      setPlayerGameboard(playerGameboard);
+      //attackResult === null ?
+      //setComputerGameboard(...computerGameboard, );
+    }
+
     if (isGameRunning) {
-      if (
-        playerGameboard.allShipsSunk(playerGameboard.ships) ||
-        computerGameboard.allShipsSunk(computerGameboard.ships)
-      ) {
+      if (playerGameboard.allShipsSunk() || computerGameboard.allShipsSunk()) {
         stopGame();
         return;
       }
@@ -89,19 +104,25 @@ export default function Battleship() {
         //player turn
         // const [x, y] = selectedCell;
         handlePlayerAttack();
+        setCurrentPlayer(computerPlayer);
+        setSelectedCell(null);
+      } else if (currentPlayer === computerPlayer) {
+        //computer turn
+        handleComputerAttack();
+        setCurrentPlayer(player);
+        setSelectedCell(null);
       }
     }
-  }, [computerGameboard, currentPlayer, isGameRunning, player, playerGameboard, selectedCell, setComputerGameboard]);
-
-
-  function handleComputerAttack() {
-    const attackResult = computerPlayer.computerRandomAttack(
-      computerGameboard,
-      computerPlayer.computerMoves
-    );
-    //attackResult === null ?
-    //setComputerGameboard(...computerGameboard, );
-  }
+  }, [
+    computerGameboard,
+    computerPlayer,
+    currentPlayer,
+    isGameRunning,
+    player,
+    playerGameboard,
+    selectedCell,
+    setComputerGameboard,
+  ]);
 
   // useEffect(() => {
   //   if (isGameRunning) {
@@ -143,9 +164,10 @@ export default function Battleship() {
           <button className="comp" onClick={handleComputerPlaceShips}>
             Computer Place Ships
           </button>
-          <button onClick={handleComputerAttack}>Computer Attack</button>
+          {/* <button onClick={handleComputerAttack}>Computer Attack</button> */}
         </div>
       </div>
+      <button onClick={startGame}>Start Game</button>
     </div>
   );
 }

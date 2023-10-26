@@ -110,7 +110,7 @@ export default class Gameboard {
   updateCellClass(
     x: number,
     y: number,
-    isHit: boolean,
+    isHit: boolean,  //true for a hit
     isComputerBoard: boolean //true when updating computer board
   ) {
     let cellParent;
@@ -132,27 +132,33 @@ export default class Gameboard {
   }
 
   //Returns true for a hit (and logs hit to ship) or false if no ship hit (and adds missed attack)
-  attackResult(allShips: Ship[], [x, y]: [number, number]): boolean {
-    for (const hitShip of allShips) {
+  attackResult(gameboard: Gameboard, [x, y]: [number, number]): boolean {
+    for (const hitShip of gameboard.ships) {
       if (hitShip.location.some(([ex, ey]) => ex === x && ey === y)) {
         const hitIndex = hitShip.location.findIndex(
           (set) => JSON.stringify(set) === JSON.stringify([x, y])
         );
         //console.log(hitIndex);
         hitShip.hit(hitIndex);
+        console.log(hitIndex);
         return true;
       }
     }
-    this.missedAttacks.push([x, y]);
+    gameboard.missedAttacks.push([x, y]);
     return false;
   }
 
   // Returns true if all ships have been sunk
-  allShipsSunk(allShips: Ship[]): boolean {
-    return allShips.every((ship) => ship.isSunk);
+  allShipsSunk(): boolean {
+    if (this.ships.every((ship) => ship.isSunk)) {
+      this.allSunk = true;
+      return true;
+    } else {
+      return false;
+    }
   }
-
-  getCellClass(x: number, y: number) {
-    this.attackResult(this.ships, [x, y]); // need to fix
-  }
+  // Not needed?
+  // getCellClass(x: number, y: number) {
+  //   this.attackResult(this.ships, [x, y]); // need to fix
+  // }
 }

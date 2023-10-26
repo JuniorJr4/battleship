@@ -30,10 +30,10 @@ export default class Player {
   }
 
   playerAttack(gameboard: Gameboard, x: number, y: number) {
-    gameboard.attackResult(gameboard.ships, [x, y]);
+    gameboard.attackResult(gameboard, [x, y]);
   }
 
-  computerRandomAttack(gameboard: Gameboard, selectedPoints: Set<string>) {
+  computerRandomAttack(gameboard: Gameboard, selectedPoints: Set<string>): string {
     let randomX = Math.floor(Math.random() * gameboard.width);
     let randomY = Math.floor(Math.random() * gameboard.height);
     let point = `${randomX},${randomY}`;
@@ -45,7 +45,8 @@ export default class Player {
     }
 
     selectedPoints.add(point);
-    this.attacksMade = new Set<string>([...this.attacksMade, selectedPoints]);
-    gameboard.attackResult(gameboard.ships, [randomX, randomY]);
+    //this.attacksMade = new Set<string>([...this.attacksMade, selectedPoints]);
+    gameboard.attackResult(gameboard, [randomX, randomY]);
+    return point;
   }
 }
