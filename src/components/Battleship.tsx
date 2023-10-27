@@ -24,9 +24,12 @@ export default function Battleship() {
 
   const [isGameRunning, setIsGameRunning] = useState(false);
 
+  const [isPlacingShips, setIsPlacingShips] = useState(false);
+
   const startGame = () => {
     setSelectedCell(null);
     setIsGameRunning(true);
+    setIsPlacingShips(true);
   };
 
   const stopGame = () => {
@@ -94,13 +97,24 @@ export default function Battleship() {
       //setComputerGameboard(...computerGameboard, );
     }
 
+    function handlePlaceShip(e: MouseEvent<HTMLDivElement>) {
+      const shipID = (e.target as HTMLDivElement).getAttribute("data-x")
+      console.log(shipID);
+    }
+
     if (isGameRunning) {
       if (playerGameboard.allShipsSunk() || computerGameboard.allShipsSunk()) {
         stopGame();
         return;
       }
 
-      if (currentPlayer === player && selectedCell) {
+      // add logic for player to place ships before attacks are made
+      if (isPlacingShips) {
+
+        return;
+      }
+
+      if (currentPlayer === player && selectedCell && !isPlacingShips) {
         //player turn
         // const [x, y] = selectedCell;
         handlePlayerAttack();
@@ -118,29 +132,12 @@ export default function Battleship() {
     computerPlayer,
     currentPlayer,
     isGameRunning,
+    isPlacingShips,
     player,
     playerGameboard,
     selectedCell,
     setComputerGameboard,
   ]);
-
-  // useEffect(() => {
-  //   if (isGameRunning) {
-  //     if (
-  //       playerGameboard.allShipsSunk(playerGameboard.ships) ||
-  //       computerGameboard.allShipsSunk(computerGameboard.ships)
-  //     ) {
-  //       stopGame();
-  //       return;
-  //     }
-
-  //     if (currentPlayer === player && selectedCell) {
-  //       //player turn
-  //       // const [x, y] = selectedCell;
-  //       handlePlayerAttack();
-  //     }
-  //   }
-  // }, [computerGameboard, currentPlayer, isGameRunning, player, playerGameboard, selectedCell]);
 
   return (
     <div>
@@ -154,6 +151,13 @@ export default function Battleship() {
           <button className="player-place-ship" onClick={handlePlayerPlaceShip}>
             Player Place Ship
           </button>
+        </div>
+        <div className="ship-tns-container">
+          <button id='carrier' className="ship-btn" onClick={handlePlaceShip}>Carrier</button>
+          <button id='destroyer' className="ship-btn">Destroyer</button>
+          <button id='battleship' className="ship-btn">Battleship</button>
+          <button id='cruiser' className="ship-btn">Cruiser</button>
+          <button id='sub' className="ship-btn">submarine</button>
         </div>
         <div className="computer-gameboard">
           <h3>Computer</h3>
